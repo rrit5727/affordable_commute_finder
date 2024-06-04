@@ -275,3 +275,5 @@ const HomePage = ({ search, sendInformation }) => {
   );
 };
 export default HomePage;
+
+// comment
