@@ -1,21 +1,16 @@
 import { Link } from 'react-router-dom';
-import * as userService from '../../utilities/users-services';
 
 import { useState } from 'react';
 import './NavBar.css';
 import Hamburger from './Hamburger';
 
-const NavBar = ({ user, setUser, searchProperties }) => {
+const NavBar = ({ searchProperties }) => {
   const [showNavbar, setShowNavbar] = useState(false);
 
   const handleShowNavbar = () => {
     setShowNavbar(!showNavbar);
   };
 
-  function handleLogOut() {
-    userService.logOut();
-    setUser(null);
-  }
 
   return (
     <>
@@ -29,18 +24,9 @@ const NavBar = ({ user, setUser, searchProperties }) => {
           </div>
           <div className={`nav-elements  ${showNavbar && 'active-navbar'}`}>
             <ul>
-              <li>Hello, {user.name}</li>
               <li>
                 <Link to="/" onClick={searchProperties}>
                   Home
-                </Link>
-              </li>
-              <li>
-                <Link to="/favorites">Favorites</Link>
-              </li>
-              <li>
-                <Link to="/" onClick={handleLogOut}>
-                  Log Out
                 </Link>
               </li>
             </ul>
