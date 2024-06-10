@@ -1,0 +1,5 @@
+/* src/components/MapView/MapView.css */
+#map {
+  height: 500px;
+  width: 100%;
+}
