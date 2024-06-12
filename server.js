@@ -3,6 +3,8 @@ const path = require('path');
 const logger = require('morgan');
 require('dotenv').config();
 
+console.log("Current API Key:", process.env.API_KEY);
+
 require('./config/database');
 
 const app = express();
