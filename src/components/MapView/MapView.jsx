@@ -17,6 +17,13 @@ const formattedValue = (property) => {
   });
 };
 
+const formatAddress = (address) => {
+  const addressParts = address.split(' ');
+  return addressParts
+    .map(part => part.trim().toLowerCase())
+    .join('-');
+};
+
 const customIcon = L.icon({
   iconUrl: 'https://cdn4.iconfinder.com/data/icons/symbol-blue-set-1/100/Untitled-2-09-1024.png',
   iconSize: [32, 32], // size of the icon
@@ -66,9 +73,16 @@ const MapView = ({ fifteenMinute, thirtyMinute, fortyFiveMinute, sixtyMinute }) 
         // Convert travel time to minutes
         const travelTimeInMinutes = secondsToTime(property.properties[0].travel_time);
 
+        // Format the address
+        const formattedAddress = formatAddress(property.propertyData.street_address);
+
+        // Create a URL for the address
+        const addressUrl = `https://www.domain.com.au/property-profile/${encodeURIComponent(formattedAddress)}-nsw-${property.propertyData.property_post_code}`;
+
+
         // Create a popup with property details
         const popupContent = `
-          <p><strong>${property.propertyData.address}</strong></p>
+        <p><strong><a href="${addressUrl}" target="_blank">${property.propertyData.address}</a></strong></p>
           <p><strong>Purchase Price:</strong> ${formattedValue(property)}</p>
           <p><strong>Travel Time:</strong> ${travelTimeInMinutes}</p>          
           <p><strong>Distance:</strong> ${property.properties[0].distance} Km</p>

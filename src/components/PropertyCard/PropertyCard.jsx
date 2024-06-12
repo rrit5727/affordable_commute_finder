@@ -39,6 +39,12 @@ const PropertyCard = ({
 
   const distanceInKilometers = distance / 1000;
 
+  const addressParts = propertyData.street_address.split(' '); // Split address by comma
+
+  const formattedAddress = addressParts
+    .map(part => part.trim().toLowerCase()) // Trim and convert each part to lowercase
+    .join('-'); // Join parts with a hyphen
+
   const handleAddToFavorites = async () => {
     try {
       setIsButtonDisabled(true);
@@ -71,7 +77,11 @@ const PropertyCard = ({
           <img src="https://picsum.photos/500/200/?random=1&blur=3" alt="" />
         </div>
         <div className="property-title">
-          <h2>{propertyData.address}</h2>
+          <h2>
+          <a href={`https://www.domain.com.au/property-profile/${encodeURIComponent(formattedAddress)}-nsw-${propertyData.property_post_code}`}>
+            {propertyData.address}
+            </a>
+            </h2>
           <hr />
         </div>
         <div className="flex-items">
