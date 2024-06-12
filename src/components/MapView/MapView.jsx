@@ -3,6 +3,13 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './MapView.css';
 
+const secondsToTime = (seconds) => {
+  const minutes = Math.floor(seconds / 60);
+  return `${minutes} mins`;
+};
+
+
+
 const MapView = ({ fifteenMinute, thirtyMinute, fortyFiveMinute, sixtyMinute }) => {
   const mapRef = useRef(null);
   const leafletMapRef = useRef(null);
@@ -40,6 +47,18 @@ const MapView = ({ fifteenMinute, thirtyMinute, fortyFiveMinute, sixtyMinute }) 
         }
 
         const marker = L.marker([lat, lon]).addTo(leafletMapRef.current);
+
+        // Create a popup with property details
+        const popupContent = `
+          
+          <p><strong>Travel Time:</strong> ${property.properties[0].travel_time}</p>          
+          <p><strong>Distance:</strong> ${property.properties[0].distance} Km</p>
+          <p><strong>Transportation:</strong> ${property.transportation}</p>
+          <p><strong>Property ID:</strong> ${property.propertyData}</p>
+        `;
+
+        marker.bindPopup(popupContent);
+
         return marker;
       }
       return null;
