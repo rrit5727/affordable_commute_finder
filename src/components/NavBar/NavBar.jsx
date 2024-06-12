@@ -17,7 +17,7 @@ const NavBar = ({ searchProperties }) => {
       <nav className="navbar">
         <div className="container">
           <div className="logo">
-            <img src="../../assets/logo.png" alt="" />
+            <img src="https://raw.githubusercontent.com/tdha/project-three/main/assets/logo.png" alt="" />
           </div>
           <div className="menu-icon" onClick={handleShowNavbar}>
             {<Hamburger />}

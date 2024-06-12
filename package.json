@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-google-maps/api": "^2.19.3",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
     "bootstrap": "^5.3.3",
