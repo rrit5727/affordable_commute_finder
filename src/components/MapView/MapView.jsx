@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './MapView.css';
@@ -7,6 +7,8 @@ const MapView = ({ fifteenMinute, thirtyMinute, fortyFiveMinute, sixtyMinute }) 
   const mapRef = useRef(null);
   const leafletMapRef = useRef(null);
   const markersRef = useRef([]);
+
+  const [selectedResults, setSelectedResults] = useState(fifteenMinute);
 
   useEffect(() => {
     if (!leafletMapRef.current) {
@@ -21,17 +23,12 @@ const MapView = ({ fifteenMinute, thirtyMinute, fortyFiveMinute, sixtyMinute }) 
     for (const marker of markersRef.current) {
       marker.remove();
     }
-    markersRef.current = []; // Clear the array
 
-    const allProperties = [
-      ...fifteenMinute,
-      ...thirtyMinute,
-      ...fortyFiveMinute,
-      ...sixtyMinute,
-    ];
+    // Ensure selectedResults is an array
+    const resultsArray = Array.isArray(selectedResults) ? selectedResults : [];
 
     // Add new markers
-    for (const property of allProperties) {
+    markersRef.current = resultsArray.map(property => {
       if (property.propertyData && property.propertyData.coordinates) {
         let { lat, lon } = property.propertyData.coordinates;
 
@@ -43,12 +40,26 @@ const MapView = ({ fifteenMinute, thirtyMinute, fortyFiveMinute, sixtyMinute }) 
         }
 
         const marker = L.marker([lat, lon]).addTo(leafletMapRef.current);
-        markersRef.current = markersRef.current.concat(marker); // Update without mutation
+        return marker;
       }
-    }
-  }, [fifteenMinute, thirtyMinute, fortyFiveMinute, sixtyMinute]);
+      return null;
+    }).filter(marker => marker !== null); // Filter out null values
 
-  return <div id="map" ref={mapRef} style={{ height: '500px', width: '100%' }} />;
+  }, [selectedResults]);
+
+  return (
+    <div>
+      <div>
+        <button onClick={() => setSelectedResults(fifteenMinute)}>Within 15 mins</button>
+        <button onClick={() => setSelectedResults(thirtyMinute)}>Within 30 mins</button>
+        <button onClick={() => setSelectedResults(fortyFiveMinute)}>Within 45 mins</button>
+        <button onClick={() => setSelectedResults(sixtyMinute)}>Within 60 mins</button>
+        <button onClick={() => setSelectedResults([])}>Clear</button>
+        {/* Add more buttons for different time intervals */}
+      </div>
+      <div id="map" ref={mapRef}  />
+    </div>
+  );
 };
 
 export default MapView;

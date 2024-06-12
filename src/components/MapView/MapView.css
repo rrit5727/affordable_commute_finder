@@ -1,5 +1,7 @@
 /* src/components/MapView/MapView.css */
 #map {
-  height: 500px;
-  width: 100%;
+    height: 800px !important; /* Set height to 100% */
+    width: 100%;
+    /* Other styles */
 }
+
