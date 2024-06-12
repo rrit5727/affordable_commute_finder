@@ -213,7 +213,7 @@ const HomePage = ({ search, sendInformation }) => {
     <>
       {!search ? (
         <div className="search-container">
-          <h2>Distance Calculator</h2>
+          <h2>Search Affordable Commutes</h2>
           <form onSubmit={handleSubmit}>
             <label htmlFor="address1">Address:</label>
             <input

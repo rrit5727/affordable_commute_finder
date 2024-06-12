@@ -2,49 +2,53 @@ import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './MapView.css';
-import ResultPage from '../../pages/ResultPage/ResultPage';
 
-const MapView = ({ properties }) => {
-    const mapRef = useRef(null);
-    const leafletMapRef = useRef(null);
-    const markersRef = useRef([]);
+const MapView = ({ fifteenMinute, thirtyMinute, fortyFiveMinute, sixtyMinute }) => {
+  const mapRef = useRef(null);
+  const leafletMapRef = useRef(null);
+  const markersRef = useRef([]);
 
-    useEffect(() => {
-        if (!leafletMapRef.current) {
-          leafletMapRef.current = L.map(mapRef.current).setView([51.505, -0.09], 13);
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors',
-          }).addTo(leafletMapRef.current);
+  useEffect(() => {
+    if (!leafletMapRef.current) {
+      leafletMapRef.current = L.map(mapRef.current).setView([-33.8688, 151.2093], 10);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+      }).addTo(leafletMapRef.current);
+    }
+
+    // Remove existing markers
+    for (const marker of markersRef.current) {
+      marker.remove();
+    }
+    markersRef.current = []; // Clear the array
+
+    const allProperties = [
+      ...fifteenMinute,
+      ...thirtyMinute,
+      ...fortyFiveMinute,
+      ...sixtyMinute,
+    ];
+
+    // Add new markers
+    for (const property of allProperties) {
+      if (property.propertyData && property.propertyData.coordinates) {
+        let { lat, lon } = property.propertyData.coordinates;
+
+        // Check if coordinates are already parsed
+        if (typeof lat === 'string' && typeof lon === 'string') {
+          // Coordinates are in string format, parse them
+          lat = parseFloat(lat);
+          lon = parseFloat(lon);
         }
 
-        const map = leafletMapRef.current;
+        const marker = L.marker([lat, lon]).addTo(leafletMapRef.current);
+        markersRef.current = markersRef.current.concat(marker); // Update without mutation
+      }
+    }
+  }, [fifteenMinute, thirtyMinute, fortyFiveMinute, sixtyMinute]);
 
-         // Clear previous markers before adding new ones
-         while (markersRef.current.length > 0) {
-            const marker = markersRef.current.pop();
-            map.removeLayer(marker);
-        }
-
-        // Add new markers
-        for (let i = 0; i < properties.length; i++) {
-            const property = properties[i];
-            const { lat, lon } = property.propertyData.coordinates;
-            const marker = L.marker([lat, lon])
-                .addTo(map)
-                .bindPopup(`<b>${property.propertyData.address}</b><br />${property.propertyData.purchase_price}`);
-            markersRef.current.push(marker);
-        }
-
-        // Cleanup function
-        return () => {
-            while (markersRef.current.length > 0) {
-                const marker = markersRef.current.pop();
-                map.removeLayer(marker);
-            }
-        };
-    }, [properties]);
-
-    return <div id="map" ref={mapRef} style={{ height: '500px', width: '100%' }} />;
+  return <div id="map" ref={mapRef} style={{ height: '500px', width: '100%' }} />;
 };
 
 export default MapView;
