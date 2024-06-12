@@ -50,7 +50,8 @@ const MapView = ({ fifteenMinute, thirtyMinute, fortyFiveMinute, sixtyMinute }) 
 
         // Create a popup with property details
         const popupContent = `
-          
+          <p><strong>Address:</strong> ${property.propertyData.address}</p>
+          <p><strong>Purchase Price:</strong> ${property.propertyData.purchase_price}</p>
           <p><strong>Travel Time:</strong> ${property.properties[0].travel_time}</p>          
           <p><strong>Distance:</strong> ${property.properties[0].distance} Km</p>
           <p><strong>Transportation:</strong> ${property.transportation}</p>
