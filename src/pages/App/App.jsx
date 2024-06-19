@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
-
 import './App.css';
 
 import HomePage from '../HomePage/HomePage';
 
 import NavBar from '../../components/NavBar/NavBar';
+
 
 function App() {
   const [search, setSearch] = useState(false);
