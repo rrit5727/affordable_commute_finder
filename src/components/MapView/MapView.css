@@ -7,14 +7,21 @@
 }
 
 .button {
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  padding: 8px 16px;
-  margin-right: 8px;
+  background-color: white;
+  color: mediumblue;
+  border-radius: 7%;
+  border: 1px solid mediumblue;
+  padding: 10px 20px;
+  margin-right: 10px; /* Adjust as needed */
   cursor: pointer;
 }
 
 .button.active {
-  background-color: #007bff; /* Blue color as an example */
-  color: #fff; /* White text as an example */
+  background-color: peru;
+  color: white;
+}
+
+.button:hover {
+  background-color: mediumblue;
+  color: white;
 }

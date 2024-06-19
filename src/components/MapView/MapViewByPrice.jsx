@@ -1,11 +1,11 @@
-import React from 'react';
-import './MapView.css';
+import React, { useState } from 'react';
+import './MapView.css'; // Import your CSS file
 
 const MapViewByPrice = ({ onSelectPrice }) => {
-  const [activeButton, setActiveButton] = React.useState('all'); // Default active button to 'all'
+  const [activeButton, setActiveButton] = useState('all'); // Default active button to 'all'
 
   const handleButtonClick = (priceBand) => {
-    onSelectPrice(priceBand === 'all' ? null : priceBand); // Pass null to reset filter, otherwise pass selected price band
+    onSelectPrice(priceBand);
     setActiveButton(priceBand); // Set active button state
   };
 
