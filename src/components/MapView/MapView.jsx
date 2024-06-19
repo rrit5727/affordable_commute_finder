@@ -2,26 +2,24 @@ import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './MapView.css';
+import MapViewByTime from './MapViewByTime';
+import MapViewByPrice from './MapViewByPrice';
 
 const secondsToTime = (seconds) => {
   const minutes = Math.floor(seconds / 60);
   return `${minutes} mins`;
 };
 
-
-
 const formattedValue = (property) => {
   return property.propertyData.purchase_price.toLocaleString('en-AU', {
-  style: 'currency',
-  currency: 'AUD',
+    style: 'currency',
+    currency: 'AUD',
   });
 };
 
 const formatAddress = (address) => {
   const addressParts = address.split(' ');
-  return addressParts
-    .map(part => part.trim().toLowerCase())
-    .join('-');
+  return addressParts.map(part => part.trim().toLowerCase()).join('-');
 };
 
 const customIcon = L.icon({
@@ -31,13 +29,21 @@ const customIcon = L.icon({
   popupAnchor: [0, -32], // point from which the popup should open relative to the iconAnchor
 });
 
-
-const MapView = ({ fifteenMinute, thirtyMinute, fortyFiveMinute, sixtyMinute }) => {
+const MapView = ({
+  fifteenMinute,
+  thirtyMinute,
+  fortyFiveMinute,
+  sixtyMinute,
+  seventyFiveMinute,
+  ninetyMinute
+}) => {
   const mapRef = useRef(null);
   const leafletMapRef = useRef(null);
   const markersRef = useRef([]);
 
-  const [selectedResults, setSelectedResults] = useState(fifteenMinute);
+  const [selectedTime, setSelectedTime] = useState('fifteenMinute'); // Default to fifteen minutes
+  const [selectedPriceBand, setSelectedPriceBand] = useState(null); // Default to null
+  const [isFilterByPrice, setIsFilterByPrice] = useState(false);
 
   useEffect(() => {
     if (!leafletMapRef.current) {
@@ -53,11 +59,26 @@ const MapView = ({ fifteenMinute, thirtyMinute, fortyFiveMinute, sixtyMinute }) 
       marker.remove();
     }
 
-    // Ensure selectedResults is an array
-    const resultsArray = Array.isArray(selectedResults) ? selectedResults : [];
+    // Aggregate properties based on selected time band or show all properties if no time filter is selected
+    let propertiesToShow = [];
+    if (selectedTime) {
+      propertiesToShow = eval(selectedTime); // Using eval to access the correct time state dynamically
+    } else {
+      propertiesToShow = [
+        ...fifteenMinute,
+        ...thirtyMinute,
+        ...fortyFiveMinute,
+        ...sixtyMinute,
+        ...seventyFiveMinute,
+        ...ninetyMinute,
+      ];
+    }
+
+    // Filter properties by selected price band
+    const filteredProperties = filterByPrice(propertiesToShow, selectedPriceBand);
 
     // Add new markers
-    markersRef.current = resultsArray.map(property => {
+    markersRef.current = filteredProperties.map(property => {
       if (property.propertyData && property.propertyData.coordinates) {
         let { lat, lon } = property.propertyData.coordinates;
 
@@ -70,8 +91,8 @@ const MapView = ({ fifteenMinute, thirtyMinute, fortyFiveMinute, sixtyMinute }) 
 
         const marker = L.marker([lat, lon], { icon: customIcon }).addTo(leafletMapRef.current);
 
-        // Convert travel time to minutes
-        const travelTimeInMinutes = secondsToTime(property.properties[0].travel_time);
+        // Convert travel time to minutes (assuming property.properties[0].travel_time exists)
+        const travelTimeInMinutes = property.properties[0]?.travel_time ? secondsToTime(property.properties[0].travel_time) : '';
 
         // Format the address
         const formattedAddress = formatAddress(property.propertyData.street_address);
@@ -79,13 +100,12 @@ const MapView = ({ fifteenMinute, thirtyMinute, fortyFiveMinute, sixtyMinute }) 
         // Create a URL for the address
         const addressUrl = `https://www.domain.com.au/property-profile/${encodeURIComponent(formattedAddress)}-nsw-${property.propertyData.property_post_code}`;
 
-
         // Create a popup with property details
         const popupContent = `
-        <p><strong><a href="${addressUrl}" target="_blank">${property.propertyData.address}</a></strong></p>
+          <p><strong><a href="${addressUrl}" target="_blank">${property.propertyData.address}</a></strong></p>
           <p><strong>Purchase Price:</strong> ${formattedValue(property)}</p>
           <p><strong>Travel Time:</strong> ${travelTimeInMinutes}</p>          
-          <p><strong>Distance:</strong> ${property.properties[0].distance} Km</p>
+          <p><strong>Distance:</strong> ${property.properties[0]?.distance || 0} Km</p>
           <p><strong>Transportation:</strong> ${property.transportation}</p>
         `;
 
@@ -96,19 +116,58 @@ const MapView = ({ fifteenMinute, thirtyMinute, fortyFiveMinute, sixtyMinute }) 
       return null;
     }).filter(marker => marker !== null); // Filter out null values
 
-  }, [selectedResults]);
+  }, [fifteenMinute, thirtyMinute, fortyFiveMinute, sixtyMinute, seventyFiveMinute, ninetyMinute, selectedTime, selectedPriceBand]);
+
+  const filterByPrice = (properties, priceBand) => {
+    if (!priceBand) return properties; // Return all properties if no price band selected
+
+    switch (priceBand) {
+      case '&lt;$1M':
+        return properties.filter(property => property.propertyData.purchase_price < 1_000_000);
+      case '$1M-$1.5M':
+        return properties.filter(
+          property =>
+            property.propertyData.purchase_price >= 1_000_000 && property.propertyData.purchase_price <= 1_500_000
+        );
+      case '$1.5M-$2M':
+        return properties.filter(
+          property =>
+            property.propertyData.purchase_price >= 1_500_000 && property.propertyData.purchase_price <= 2_000_000
+        );
+      case '$2M-$2.5M':
+        return properties.filter(
+          property =>
+            property.propertyData.purchase_price >= 2_000_000 && property.propertyData.purchase_price <= 2_500_000
+        );
+      case '$2.5M-$3M':
+        return properties.filter(
+          property =>
+            property.propertyData.purchase_price >= 2_500_000 && property.propertyData.purchase_price <= 3_000_000
+        );
+      case '&gt;$3M':
+        return properties.filter(property => property.propertyData.purchase_price > 3_000_000);
+      default:
+        return properties;
+    }
+  };
+
+  const handleToggleFilterByPrice = () => {
+    setIsFilterByPrice(prev => !prev); // Toggle between time and price filter views
+    setSelectedTime(null); // Reset selected time
+    setSelectedPriceBand(null); // Reset selected price band
+  };
 
   return (
     <div>
-      <div>
-        <button onClick={() => setSelectedResults(fifteenMinute)}>Within 15 mins</button>
-        <button onClick={() => setSelectedResults(thirtyMinute)}>Within 30 mins</button>
-        <button onClick={() => setSelectedResults(fortyFiveMinute)}>Within 45 mins</button>
-        <button onClick={() => setSelectedResults(sixtyMinute)}>Within 60 mins</button>
-        <button onClick={() => setSelectedResults([])}>Clear</button>
-        {/* Add more buttons for different time intervals */}
-      </div>
-      <div id="map" ref={mapRef}  />
+      {!isFilterByPrice ? (
+        <MapViewByTime onSelectTime={setSelectedTime} />
+      ) : (
+        <MapViewByPrice onSelectPrice={setSelectedPriceBand} />
+      )}
+      <button onClick={handleToggleFilterByPrice}>
+        {isFilterByPrice ? 'View by Time' : 'View by Price'}
+      </button>
+      <div id="map" ref={mapRef} style={{ height: '600px', width: '100%' }} />
     </div>
   );
 };

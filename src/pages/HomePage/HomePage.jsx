@@ -10,6 +10,8 @@ const HomePage = ({ search, sendInformation }) => {
   const [thirtyMinute, setThirtyMinute] = useState([]);
   const [fortyFiveMinute, setFortyFiveMinute] = useState([]);
   const [sixtyMinute, setSixtyMinute] = useState([]);
+  const [seventyFiveMinute, setSeventyFiveMinute] = useState([]);
+  const [ninetyMinute, setNinetyMinute] = useState([]);
   const [address1, setAddress1] = useState('');
   const [transportation, setTransportation] = useState('driving');
   const [mappedResults, setMappedResults] = useState([]);
@@ -56,8 +58,8 @@ const HomePage = ({ search, sendInformation }) => {
     const locationObjects = properties.map((property, index) => ({
       id: `other-location-${index}`,
       coords: {
-        lat: property.coordinates.lat,
-        lng: property.coordinates.lon,
+        lat: property.coordinates?.lat || null, // Check for null values here
+        lng: property.coordinates?.lon || null, // Check for null values here
       },
       propertyData: property,
       transportation,
@@ -137,6 +139,9 @@ const HomePage = ({ search, sendInformation }) => {
         let thirtyMinuteArray = [];
         let fortyfiveMinuteArray = [];
         let sixtyMinuteArray = [];
+        let seventyFiveMinuteArray = [];
+        let ninetyMinuteArray = [];
+
 
         mappedResults.forEach((result) =>
           result.locations.forEach((location) =>
@@ -169,6 +174,20 @@ const HomePage = ({ search, sendInformation }) => {
                     a.propertyData.purchase_price -
                     b.propertyData.purchase_price
                 );
+              } else if (a.travel_time >= 3600 && a.travel_time < 4500) { // 75 minutes
+                seventyFiveMinuteArray.push(location);
+                seventyFiveMinuteArray.sort(
+                  (a, b) =>
+                    a.propertyData.purchase_price -
+                    b.propertyData.purchase_price
+                );
+              } else if (a.travel_time >= 4500 && a.travel_time < 5400) { // 90 minutes
+                ninetyMinuteArray.push(location);
+                ninetyMinuteArray.sort(
+                  (a, b) =>
+                    a.propertyData.purchase_price -
+                    b.propertyData.purchase_price
+                );
               }
             })
           )
@@ -177,6 +196,8 @@ const HomePage = ({ search, sendInformation }) => {
         setThirtyMinute(thirtyMinuteArray);
         setFortyFiveMinute(fortyfiveMinuteArray);
         setSixtyMinute(sixtyMinuteArray);
+        setSeventyFiveMinute(seventyFiveMinuteArray);
+        setNinetyMinute(ninetyMinuteArray);
       }
       showResults(mappedResults);
     },
@@ -269,6 +290,10 @@ const HomePage = ({ search, sendInformation }) => {
           thirtyMinute={thirtyMinute}
           fortyFiveMinute={fortyFiveMinute}
           sixtyMinute={sixtyMinute}
+          seventyFiveMinute={seventyFiveMinute}
+          ninetyMinute={ninetyMinute}
+
+
         />
       )}
     </>

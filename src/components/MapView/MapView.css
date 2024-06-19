@@ -1,7 +1,20 @@
 /* src/components/MapView/MapView.css */
+
 #map {
     height: 800px !important; /* Set height to 100% */
     width: 100%;
     /* Other styles */
 }
 
+.button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 8px 16px;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.button.active {
+  background-color: #007bff; /* Blue color as an example */
+  color: #fff; /* White text as an example */
+}

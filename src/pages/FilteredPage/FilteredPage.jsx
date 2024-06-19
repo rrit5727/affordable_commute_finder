@@ -9,6 +9,8 @@ const FilteredPage = ({
   thirtyMinute,
   fortyFiveMinute,
   sixtyMinute,
+  seventyFiveMinute,
+  ninetyMinute,
 }) => {
   const [totalItems, setTotalItems] = useState(10);
   const [screenSize, setScreenSize] = useState(window.innerWidth);
@@ -53,7 +55,7 @@ const FilteredPage = ({
             <div>
               <div className="headerBlock">
                 <h1>15min travel radius</h1>
-                <h3>The most affordable properties sold in March.</h3>
+                <h3>Properties sorted by Price</h3>
               </div>
               <div className="filterCard">
                 {fifteenMinute.slice(0, totalItems).map((property, index) => (
@@ -70,7 +72,7 @@ const FilteredPage = ({
             <div>
               <div className="headerBlock">
                 <h1>30min travel radius</h1>
-                <h3>The most affordable properties sold in March.</h3>
+                <h3>Properties sorted by Price</h3>
               </div>
               <div className="filterCard">
                 {thirtyMinute.slice(0, totalItems).map((property, index) => (
@@ -87,7 +89,7 @@ const FilteredPage = ({
             <div>
               <div className="headerBlock">
                 <h1>45min travel radius</h1>
-                <h3>The most affordable properties sold in March.</h3>
+                <h3>Properties sorted by Price</h3>
               </div>
               <div className="filterCard">
                 {fortyFiveMinute.slice(0, totalItems).map((property, index) => (
@@ -104,7 +106,7 @@ const FilteredPage = ({
             <div>
               <div className="headerBlock">
                 <h1>60min travel radius</h1>
-                <h3>The most affordable properties sold in March.</h3>
+                <h3>Properties sorted by Price</h3>
               </div>
               <div className="filterCard">
                 {sixtyMinute.slice(0, totalItems).map((property, index) => (
@@ -118,6 +120,40 @@ const FilteredPage = ({
                 ))}
               </div>
             </div>
+            <div>
+            <div className="headerBlock">
+              <h1>75min travel radius</h1>
+              <h3>Properties sorted by Price</h3>
+            </div>
+            <div className="filterCard">
+              {seventyFiveMinute.slice(0, totalItems).map((property, index) => (
+                <PropertyCard
+                  key={property.id}
+                  propertyData={property.propertyData}
+                  travelTime={property.properties[0].travel_time}
+                  distance={property.properties[0].distance}
+                  transportation={property.transportation}
+                />
+              ))}
+            </div>
+          </div>
+          <div>
+            <div className="headerBlock">
+              <h1>90min travel radius</h1>
+              <h3>Properties sorted by Price</h3>
+            </div>
+            <div className="filterCard">
+              {ninetyMinute.slice(0, totalItems).map((property, index) => (
+                <PropertyCard
+                  key={property.id}
+                  propertyData={property.propertyData}
+                  travelTime={property.properties[0].travel_time}
+                  distance={property.properties[0].distance}
+                  transportation={property.transportation}
+                />
+              ))}
+            </div>
+          </div>
           </>
         ) : (
           // Map View
@@ -126,6 +162,8 @@ const FilteredPage = ({
             thirtyMinute={thirtyMinute.slice(0, totalItems)}
             fortyFiveMinute={fortyFiveMinute.slice(0, totalItems)}
             sixtyMinute={sixtyMinute.slice(0, totalItems)}
+            seventyFiveMinute={seventyFiveMinute.slice(0, totalItems)}
+            ninetyMinute={ninetyMinute.slice(0, totalItems)}
           />
         )}
 
