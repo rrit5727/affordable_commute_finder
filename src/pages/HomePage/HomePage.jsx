@@ -234,7 +234,7 @@ const HomePage = ({ search, sendInformation }) => {
     <>
       {!search ? (
         <div className="search-container">
-          <h2>Search Affordable Commutes</h2>
+          <h2>Search properties by travel time</h2>
           <form onSubmit={handleSubmit}>
             <label htmlFor="address1">Address:</label>
             <input
@@ -262,9 +262,9 @@ const HomePage = ({ search, sendInformation }) => {
               value={propertyType}
               onChange={(e) => setPropertyType(e.target.value)}
             >
-              <option value="all">All</option>
+              
               <option value="house">House</option>
-              <option value="apartment">Apartment</option>
+              
             </select>
             <button className="button-search" type="submit">
               Show results
